@@ -17,7 +17,7 @@ namespace TrackModelProcessor
             output.WriteObject(value.Box);
         }
 
-        public override string GetRuntimeReader(Microsoft.Xna.Framework.TargetPlatform targetPlatform)
+        public override string GetRuntimeReader(Microsoft.Xna.Framework.Content.Pipeline.TargetPlatform targetPlatform)
         {
             return typeof (MeshInfoTypeReader).AssemblyQualifiedName;
         }

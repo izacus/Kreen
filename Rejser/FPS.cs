@@ -53,7 +53,7 @@ namespace Kreen
 
         public sealed override void Draw(GameTime gameTime)
         {
-            float elapsed = (float)gameTime.ElapsedRealTime.TotalSeconds;
+            float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             framecount++;
 
 

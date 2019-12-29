@@ -25,7 +25,6 @@ public static class BoundingBoxRenderer
         };
 
     static BasicEffect effect;
-    static VertexDeclaration vertDecl;
 
     #endregion
 
@@ -46,10 +45,9 @@ public static class BoundingBoxRenderer
     {
         if (effect == null)
         {
-            effect = new BasicEffect(graphicsDevice, null);
+            effect = new BasicEffect(graphicsDevice);
             effect.VertexColorEnabled = true;
             effect.LightingEnabled = false;
-            vertDecl = new VertexDeclaration(graphicsDevice, VertexPositionColor.VertexElements);
         }
 
         Vector3[] corners = box.GetCorners();
@@ -59,15 +57,11 @@ public static class BoundingBoxRenderer
             verts[i].Color = color;
         }
 
-        graphicsDevice.VertexDeclaration = vertDecl;
-
         effect.View = view;
         effect.Projection = projection;
-
-        effect.Begin();
         foreach (EffectPass pass in effect.CurrentTechnique.Passes)
         {
-            pass.Begin();
+            pass.Apply();
 
             graphicsDevice.DrawUserIndexedPrimitives(
                 PrimitiveType.LineList,
@@ -77,9 +71,6 @@ public static class BoundingBoxRenderer
                 indices,
                 0,
                 indices.Length / 2);
-
-            pass.End();
         }
-        effect.End();
     }
 }

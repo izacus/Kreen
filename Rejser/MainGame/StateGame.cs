@@ -36,7 +36,6 @@ namespace Kreen.MainGame
 
         // Shadow mapping objects
         private RenderTarget2D shadowMapRenderTarget;
-        private DepthStencilBuffer shadowMapDepthBuffer;
         private Texture2D shadowMap;
 
         // HUD
@@ -111,41 +110,11 @@ namespace Kreen.MainGame
 
             // Prepare shadow mapping
             // Prepare shadow mapping parameters
-            SurfaceFormat shadowMapFormat = SurfaceFormat.Unknown;
-
-            // Can we use 32-bit format?
-            if (GraphicsAdapter.DefaultAdapter.CheckDeviceFormat(DeviceType.Hardware,
-                                                                 GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Format,
-                                                                 TextureUsage.Linear,
-                                                                 QueryUsages.None,
-                                                                 ResourceType.RenderTarget,
-                                                                 SurfaceFormat.Single) == true)
-            {
-                shadowMapFormat = SurfaceFormat.Single;
-            }
-            else if (GraphicsAdapter.DefaultAdapter.CheckDeviceFormat(DeviceType.Hardware,
-                                                                      GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Format,
-                                                                      TextureUsage.Linear,
-                                                                      QueryUsages.None,
-                                                                      ResourceType.RenderTarget,
-                                                                      SurfaceFormat.HalfSingle) == true)
-            {
-                shadowMapFormat = SurfaceFormat.HalfSingle;
-            }
-
+            SurfaceFormat shadowMapFormat = SurfaceFormat.Single;
             const int shadowMapSize = 1024;
 
             // Create the shadow map render target
-            shadowMapRenderTarget = new RenderTarget2D(GameStateManager.GraphicsDevice,
-                                                       shadowMapSize,
-                                                       shadowMapSize,
-                                                       1,
-                                                       shadowMapFormat);
-
-            shadowMapDepthBuffer = new DepthStencilBuffer(GameStateManager.GraphicsDevice,
-                                                          shadowMapSize,
-                                                          shadowMapSize,
-                                                          DepthFormat.Depth24);
+            shadowMapRenderTarget = new RenderTarget2D(GameStateManager.GraphicsDevice, shadowMapSize, shadowMapSize, true, shadowMapFormat, DepthFormat.Depth24);
         }
 
         public override void UnloadContent()
@@ -187,9 +156,7 @@ namespace Kreen.MainGame
             // ===================================================================
 
             // Set render target
-            GameStateManager.GraphicsDevice.SetRenderTarget(0, shadowMapRenderTarget);
-            DepthStencilBuffer oldDepthBuffer = GameStateManager.GraphicsDevice.DepthStencilBuffer;
-            GameStateManager.GraphicsDevice.DepthStencilBuffer = shadowMapDepthBuffer;
+            GameStateManager.GraphicsDevice.SetRenderTarget(shadowMapRenderTarget);
 
             // Clear the device
             GameStateManager.GraphicsDevice.Clear(Color.White);
@@ -201,11 +168,9 @@ namespace Kreen.MainGame
             // =====================================================================
 
             // Reset device render target
-            GameStateManager.GraphicsDevice.SetRenderTarget(0, null);
-            // Reset the depth buffer
-            GameStateManager.GraphicsDevice.DepthStencilBuffer = oldDepthBuffer;
+            GameStateManager.GraphicsDevice.SetRenderTarget(null);
             // Get shadow map
-            shadowMap = shadowMapRenderTarget.GetTexture();
+            shadowMap = shadowMapRenderTarget;
 
             // Clear screen
             GameStateManager.GraphicsDevice.Clear(Color.CornflowerBlue);

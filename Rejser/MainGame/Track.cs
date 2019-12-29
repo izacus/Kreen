@@ -91,7 +91,7 @@ namespace Kreen.MainGame
             {
                 foreach (ModelMeshPart parts in mesh.MeshParts)
                 {
-                    parts.Effect = effect.Clone(graphicsDevice);
+                    parts.Effect = effect.Clone();
                 }
             }
         }

@@ -31,8 +31,7 @@ namespace Kreen.MainGame
 
         public void Draw(ref Matrix world, ref Matrix projection, ref Matrix view, ref Vector3 cameraPosition)
         {
-            graphicsDevice.RenderState.DepthBufferEnable = false;
-            graphicsDevice.RenderState.DepthBufferWriteEnable = false;
+            graphicsDevice.DepthStencilState = DepthStencilState.None;
 
             positionTransformation = Matrix.CreateTranslation(cameraPosition);
 
@@ -55,8 +54,7 @@ namespace Kreen.MainGame
                 mesh.Draw();
             }
 
-            graphicsDevice.RenderState.DepthBufferEnable = true;
-            graphicsDevice.RenderState.DepthBufferWriteEnable = true;
+            graphicsDevice.DepthStencilState = DepthStencilState.Default;
         }
     }
 }

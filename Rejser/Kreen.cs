@@ -31,9 +31,6 @@ namespace Kreen
             graphics.SynchronizeWithVerticalRetrace = true;
             this.IsFixedTimeStep = true;
 
-            graphics.MinimumPixelShaderProfile = ShaderProfile.PS_2_0;
-            graphics.MinimumVertexShaderProfile = ShaderProfile.VS_2_0;
-
             gameStateManager = new GameStateManager(this);
             bloomComponent = new BloomComponent(this);
 

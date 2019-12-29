@@ -575,7 +575,7 @@ namespace Kreen.MainGame
             {
                 foreach (ModelMeshPart parts in mesh.MeshParts)
                 {
-                    parts.Effect = effect.Clone(mainGameState.GameStateManager.GraphicsDevice);
+                    parts.Effect = effect.Clone();
                 }
             }
         }

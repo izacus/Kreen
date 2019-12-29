@@ -7,7 +7,6 @@ using System;
 public static class BoundingSphereRenderer
 {
     static VertexBuffer vertBuffer;
-    static VertexDeclaration vertDecl;
     static BasicEffect effect;
     static int sphereResolution;
 
@@ -21,9 +20,7 @@ public static class BoundingSphereRenderer
     public static void InitializeGraphics(GraphicsDevice graphicsDevice, int sphereResolution)
     {
         BoundingSphereRenderer.sphereResolution = sphereResolution;
-
-        vertDecl = new VertexDeclaration(graphicsDevice, VertexPositionColor.VertexElements);
-        effect = new BasicEffect(graphicsDevice, null);
+        effect = new BasicEffect(graphicsDevice);
         effect.LightingEnabled = false;
         effect.VertexColorEnabled = false;
 
@@ -57,10 +54,7 @@ public static class BoundingSphereRenderer
                 Color.White);
         }
 
-        vertBuffer = new VertexBuffer(
-            graphicsDevice,
-            verts.Length * VertexPositionColor.SizeInBytes,
-            BufferUsage.None);
+        vertBuffer = new VertexBuffer(graphicsDevice, VertexPositionColor.VertexDeclaration, verts.Length, BufferUsage.None);
         vertBuffer.SetData(verts);
     }
 
@@ -85,12 +79,7 @@ public static class BoundingSphereRenderer
     {
         if (vertBuffer == null)
             InitializeGraphics(graphicsDevice, 30);
-
-        graphicsDevice.VertexDeclaration = vertDecl;
-        graphicsDevice.Vertices[0].SetSource(
-            vertBuffer,
-            0,
-            VertexPositionColor.SizeInBytes);
+        graphicsDevice.SetVertexBuffer(vertBuffer);
 
         effect.World =
             Matrix.CreateScale(sphere.Radius) *
@@ -99,11 +88,9 @@ public static class BoundingSphereRenderer
         effect.Projection = projection;
         effect.DiffuseColor = xyColor.ToVector3();
 
-        effect.Begin();
         foreach (EffectPass pass in effect.CurrentTechnique.Passes)
         {
-            pass.Begin();
-
+            pass.Apply();
             //render each circle individually
             graphicsDevice.DrawPrimitives(
                   PrimitiveType.LineStrip,
@@ -111,22 +98,19 @@ public static class BoundingSphereRenderer
                   sphereResolution);
 
             effect.DiffuseColor = xzColor.ToVector3();
-            effect.CommitChanges();
+            pass.Apply();
             graphicsDevice.DrawPrimitives(
                   PrimitiveType.LineStrip,
                   sphereResolution + 1,
                   sphereResolution);
 
             effect.DiffuseColor = yzColor.ToVector3();
-            effect.CommitChanges();
+            pass.Apply();
             graphicsDevice.DrawPrimitives(
                   PrimitiveType.LineStrip,
                   (sphereResolution + 1) * 2,
                   sphereResolution);
-
-            pass.End();
         }
-        effect.End();
     }
 
     /// <summary>
@@ -146,12 +130,7 @@ public static class BoundingSphereRenderer
     {
         if (vertBuffer == null)
             InitializeGraphics(graphicsDevice, 30);
-
-        graphicsDevice.VertexDeclaration = vertDecl;
-        graphicsDevice.Vertices[0].SetSource(
-              vertBuffer,
-              0,
-              VertexPositionColor.SizeInBytes);
+        graphicsDevice.SetVertexBuffer(vertBuffer);
 
         effect.World =
               Matrix.CreateScale(sphere.Radius) *
@@ -160,10 +139,9 @@ public static class BoundingSphereRenderer
         effect.Projection = projection;
         effect.DiffuseColor = color.ToVector3();
 
-        effect.Begin();
         foreach (EffectPass pass in effect.CurrentTechnique.Passes)
         {
-            pass.Begin();
+            pass.Apply();
 
             //render each circle individually
             graphicsDevice.DrawPrimitives(
@@ -178,9 +156,6 @@ public static class BoundingSphereRenderer
                   PrimitiveType.LineStrip,
                   (sphereResolution + 1) * 2,
                   sphereResolution);
-
-            pass.End();
         }
-        effect.End();
     }
 }
